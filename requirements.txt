@@ -1,0 +1,13 @@
+streamlit==1.60.0
+plotly==6.9.0
+numpy==2.5.1
+pandas==3.0.5
+groq==1.6.0
+python-dotenv==1.2.2
+sentence-transformers==5.6.1
+google-play-scraper==1.2.7
+beautifulsoup4==4.15.0
+lxml==6.1.1
+requests==2.34.2
+urllib3==2.7.0
+langdetect==1.0.9

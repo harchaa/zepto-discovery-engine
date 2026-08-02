@@ -1,0 +1,19 @@
+{
+  "per_file_raw_counts": {
+    "play_store": 163539,
+    "reddit_post": 236,
+    "reddit_comment": 2521
+  },
+  "total_unique_after_dedupe": 166296,
+  "edge_case_checks": {
+    "dedupe_integrity_play_store": "PASS",
+    "dedupe_integrity_reddit": "PASS",
+    "empty_text_count": 40,
+    "date_sanity": "PASS",
+    "cross_source_text_dupes": 0,
+    "volume_by_source": {
+      "play_store": 163539,
+      "reddit": 2757
+    }
+  }
+}

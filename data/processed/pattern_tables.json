@@ -1,0 +1,324 @@
+{
+  "meta": {
+    "n_tagged_and_on_topic": 556,
+    "source_split": {
+      "play_store": 556
+    },
+    "frequency_threshold_used": 15
+  },
+  "ops_friction_context_only": {
+    "n": 181,
+    "top_friction_types": [
+      [
+        "app_ux_bug",
+        64
+      ],
+      [
+        "customer_support",
+        56
+      ],
+      [
+        "delivery_speed",
+        53
+      ],
+      [
+        "damaged_in_transit",
+        23
+      ],
+      [
+        "quality_perishables",
+        17
+      ],
+      [
+        "pricing_value",
+        15
+      ],
+      [
+        "no_easy_refund",
+        13
+      ],
+      [
+        "product_authenticity",
+        10
+      ],
+      [
+        "no_refund",
+        3
+      ],
+      [
+        "delivery_rider_behaviour",
+        2
+      ],
+      [
+        "delivery_issue",
+        2
+      ],
+      [
+        "no_customer_support",
+        2
+      ],
+      [
+        "payment_options",
+        2
+      ],
+      [
+        "no_cod",
+        2
+      ],
+      [
+        "quality_uncertainty_unfamiliar_category",
+        2
+      ]
+    ]
+  },
+  "category_exploration_primary": {
+    "n": 34,
+    "top_friction_types": [
+      [
+        "quality_perishables",
+        23
+      ],
+      [
+        "quality_uncertainty_unfamiliar_category",
+        19
+      ],
+      [
+        "product_authenticity",
+        14
+      ],
+      [
+        "sizing_fit_uncertainty",
+        3
+      ],
+      [
+        "no_customer_support",
+        1
+      ],
+      [
+        "product_unavailability",
+        1
+      ],
+      [
+        "unethical_pricing",
+        1
+      ],
+      [
+        "pricing_value",
+        1
+      ],
+      [
+        "trust_vs_specialist_retailer",
+        1
+      ]
+    ],
+    "categories_involved": [
+      [
+        "groceries_staples",
+        20
+      ],
+      [
+        "not_category_specific",
+        5
+      ],
+      [
+        "electronics",
+        3
+      ],
+      [
+        "apparel",
+        2
+      ],
+      [
+        "personal_care",
+        2
+      ],
+      [
+        "snacks_beverages",
+        2
+      ],
+      [
+        "home_kitchen",
+        1
+      ],
+      [
+        "baby_care",
+        1
+      ]
+    ]
+  },
+  "category_x_friction_exploration": {
+    "apparel": {
+      "sizing_fit_uncertainty": 1,
+      "no_customer_support": 1,
+      "quality_perishables": 1,
+      "product_authenticity": 1,
+      "quality_uncertainty_unfamiliar_category": 1
+    },
+    "home_kitchen": {
+      "product_unavailability": 1
+    },
+    "electronics": {
+      "product_authenticity": 3,
+      "quality_uncertainty_unfamiliar_category": 3,
+      "quality_perishables": 2,
+      "sizing_fit_uncertainty": 1
+    },
+    "groceries_staples": {
+      "quality_perishables": 14,
+      "quality_uncertainty_unfamiliar_category": 11,
+      "product_authenticity": 8,
+      "unethical_pricing": 1,
+      "sizing_fit_uncertainty": 1,
+      "pricing_value": 1
+    },
+    "not_category_specific": {
+      "quality_uncertainty_unfamiliar_category": 3,
+      "quality_perishables": 3,
+      "trust_vs_specialist_retailer": 1
+    },
+    "baby_care": {
+      "product_authenticity": 1,
+      "quality_perishables": 1,
+      "sizing_fit_uncertainty": 1,
+      "quality_uncertainty_unfamiliar_category": 1
+    },
+    "personal_care": {
+      "quality_perishables": 2,
+      "product_authenticity": 1,
+      "quality_uncertainty_unfamiliar_category": 1
+    },
+    "snacks_beverages": {
+      "quality_perishables": 2,
+      "product_authenticity": 1,
+      "quality_uncertainty_unfamiliar_category": 1
+    }
+  },
+  "behavior_signal_breakdown": {
+    "none_detected": 444,
+    "habit_repeat_purchase": 59,
+    "stated_avoidance": 39,
+    "discovery_channel_mentioned": 6,
+    "comparison_to_competitor": 3,
+    "exploration_attempt_negative": 2,
+    "convenience_seeking_language": 2,
+    "price_sensitive_language": 1
+  },
+  "sentiment_breakdown": {
+    "positive": 272,
+    "negative": 228,
+    "neutral": 40,
+    "mixed": 16
+  },
+  "category_mentioned_overall": {
+    "groceries_staples": 234,
+    "not_category_specific": 232,
+    "snacks_beverages": 21,
+    "electronics": 7,
+    "apparel": 3,
+    "personal_care": 3,
+    "home_kitchen": 1,
+    "baby_care": 1
+  },
+  "stated_avoidance_leads": {
+    "n": 39,
+    "categories": [
+      [
+        "groceries_staples",
+        26
+      ],
+      [
+        "not_category_specific",
+        8
+      ],
+      [
+        "snacks_beverages",
+        3
+      ],
+      [
+        "electronics",
+        2
+      ],
+      [
+        "apparel",
+        1
+      ],
+      [
+        "baby_care",
+        1
+      ]
+    ],
+    "note": "Leads, not a measured avoidance rate - see DOCS/03_THOUGHT_PROCESS.md §6"
+  },
+  "segment_x_behavior": {
+    "pos(4-5)": {
+      "play_store": {
+        "none_detected": 243,
+        "habit_repeat_purchase": 49,
+        "convenience_seeking_language": 2,
+        "discovery_channel_mentioned": 2,
+        "stated_avoidance": 2,
+        "price_sensitive_language": 1,
+        "comparison_to_competitor": 1
+      }
+    },
+    "neu(3)": {
+      "play_store": {
+        "none_detected": 52,
+        "habit_repeat_purchase": 4,
+        "stated_avoidance": 3,
+        "discovery_channel_mentioned": 2,
+        "comparison_to_competitor": 1
+      }
+    },
+    "neg(1-2)": {
+      "play_store": {
+        "none_detected": 149,
+        "stated_avoidance": 34,
+        "habit_repeat_purchase": 6,
+        "exploration_attempt_negative": 2,
+        "discovery_channel_mentioned": 2,
+        "comparison_to_competitor": 1
+      }
+    }
+  },
+  "exploration_themes_above_threshold": [
+    [
+      "quality_perishables",
+      23
+    ],
+    [
+      "quality_uncertainty_unfamiliar_category",
+      19
+    ]
+  ],
+  "exploration_themes_below_threshold_weak": [
+    [
+      "product_authenticity",
+      14
+    ],
+    [
+      "sizing_fit_uncertainty",
+      3
+    ],
+    [
+      "no_customer_support",
+      1
+    ],
+    [
+      "product_unavailability",
+      1
+    ],
+    [
+      "unethical_pricing",
+      1
+    ],
+    [
+      "pricing_value",
+      1
+    ],
+    [
+      "trust_vs_specialist_retailer",
+      1
+    ]
+  ]
+}

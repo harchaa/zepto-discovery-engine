@@ -1,0 +1,19 @@
+.env
+.streamlit/secrets.toml
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+
+# Large raw/intermediate pipeline artifacts (tens of MB, not needed by the deployed app -
+# regenerate locally by re-running src/unify_reviews.py + src/clean_corpus.py against the
+# scraper outputs). Kept out of git to keep the repo small and Streamlit Cloud deploys fast.
+data/raw/*_raw.jsonl
+data/raw/unified_reviews.jsonl
+data/processed/cleaned_reviews.jsonl
+data/processed/open_coding_sample.jsonl
+
+# Everything else in data/ IS tracked: phase1_summary.json, tagged_reviews.jsonl,
+# pattern_tables.json, app_export.jsonl, embeddings.npz, embeddings_meta.jsonl -
+# small, and exactly what the deployed app needs to run.
