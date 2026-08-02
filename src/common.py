@@ -38,6 +38,50 @@ def read_jsonl(path):
 
 PROCESSED_DIR = RAW_DIR.replace("/raw", "/processed")
 
+# friction_type canonicalization, built from the actual variant labels observed in tagged
+# output (the LLM invents free-form snake_case tags by design - see 04_TAXONOMY_DRAFT_v0.md -
+# so near-duplicates like delivery/delivery_issue/delivery_experience accumulate). Collapsed here,
+# once, at the single point every downstream consumer reads through (load_joined_tagged), rather
+# than in each of analyze_patterns.py / insights.py / the chatbot separately. Raw tags in
+# tagged_reviews.jsonl are left untouched (audit trail); this only affects what analysis sees.
+FRICTION_TYPE_CANONICAL = {
+    "refund": "no_easy_refund", "refund_process": "no_easy_refund", "no_refund": "no_easy_refund",
+    "refund_policy": "no_easy_refund", "refund_issue": "no_easy_refund",
+    "no_replacement_policy": "no_easy_refund",
+    "delivery": "delivery_reliability", "delivery_issue": "delivery_reliability",
+    "delivery_issues": "delivery_reliability", "delivery_experience": "delivery_reliability",
+    "delivery_process": "delivery_reliability", "delivery_area": "delivery_reliability",
+    "delivery_access": "delivery_reliability", "delivery_boys": "delivery_reliability",
+    "delivery_option": "delivery_reliability", "delivery_delay": "delivery_reliability",
+    "delivery_rider_behaviour": "delivery_reliability", "delivery_refund": "delivery_reliability",
+    "delivery/refund": "delivery_reliability", "delivery_charges": "pricing_value",
+    "app_bug": "app_ux_bug", "account_issue": "app_ux_bug",
+    "product_quality": "quality_perishables", "quality": "quality_perishables",
+    "spoiled_product": "quality_perishables",
+    "no_customer_support": "customer_support",
+    "payment_issues": "payment_discount_glitch", "payment_issue": "payment_discount_glitch",
+    "payment": "payment_discount_glitch", "payment_options": "payment_discount_glitch",
+    "payment_process": "payment_discount_glitch", "payment_method": "payment_discount_glitch",
+    "wallet_issue": "payment_discount_glitch", "cash_on_delivery": "payment_discount_glitch",
+    "no_cod": "payment_discount_glitch",
+    "trust_issues": "trust_vs_specialist_retailer",
+    "availability": "product_availability", "out_of_stock": "product_availability",
+    "product_unavailability": "product_availability",
+    "damaged_product": "damaged_in_transit",
+    "price": "pricing_value",
+}
+
+
+def canonicalize_friction_types(tags):
+    if not tags:
+        return tags
+    seen = []
+    for t in tags:
+        canon = FRICTION_TYPE_CANONICAL.get(t, t)
+        if canon not in seen:
+            seen.append(canon)
+    return seen
+
 
 def load_joined_tagged():
     """Tagged records joined back to their cleaned-corpus metadata (source, date, rating, text).
@@ -57,6 +101,7 @@ def load_joined_tagged():
             continue
         row = dict(c)
         row.update(t)
+        row["friction_type"] = canonicalize_friction_types(row.get("friction_type"))
         joined.append(row)
     return joined
 

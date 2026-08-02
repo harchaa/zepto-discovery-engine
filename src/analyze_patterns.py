@@ -104,8 +104,15 @@ def main():
         for band, sources in segment_cuts.items()
     }
 
-    freq_threshold = max(15, round(0.01 * n))
+    # Threshold basis: % of records that could carry friction at all (friction_scope != none),
+    # not % of the full tagged set - trivial/insufficient auto-tags are always friction_scope
+    # "none" by construction, so including them in the denominator dilutes real signal (this
+    # became visible once auto-tagging started covering ~half the corpus with zero-friction
+    # placeholders - see DOCS/03_THOUGHT_PROCESS.md decisions table).
+    n_with_friction = len(ops_rows) + len(exploration_rows) + len(ambiguous_rows)
+    freq_threshold = max(15, round(0.01 * n_with_friction))
     tables["meta"]["frequency_threshold_used"] = freq_threshold
+    tables["meta"]["frequency_threshold_basis_n"] = n_with_friction
     confirmed_exploration_themes = [
         (ft, count) for ft, count in tables["category_exploration_primary"]["top_friction_types"]
         if count >= freq_threshold
@@ -125,7 +132,7 @@ def main():
     exported = dump_app_export(rows)
     print(f"Refreshed data/processed/app_export.jsonl ({exported} rows) - what the deployed app reads")
     print(f"Frequency threshold used: >= {freq_threshold} mentions to count as a confirmed theme "
-          f"(max(15, 1% of {n}))")
+          f"(max(15, 1% of {n_with_friction} friction-bearing records))")
     print(f"Category-exploration themes above threshold: {len(confirmed_exploration_themes)}")
     print(f"Stated-avoidance leads found: {len(stated_avoidance)}")
 

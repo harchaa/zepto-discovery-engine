@@ -17,7 +17,7 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 from data_access import PROCESSED_DIR  # noqa: E402
-from groq_client import MODEL, chat  # noqa: E402
+from groq_client import MODEL, TAGGING_MODEL, QuotaExhausted, chat  # noqa: E402
 
 INDEX_PATH = f"{PROCESSED_DIR}/embeddings.npz"
 META_PATH = f"{PROCESSED_DIR}/embeddings_meta.jsonl"
@@ -114,16 +114,27 @@ def answer(question, top_k=TOP_K):
 
     context = format_context(relevant)
     user_prompt = f"RETRIEVED REVIEWS:\n{context}\n\nQUESTION: {question}"
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": user_prompt},
+    ]
+    model_used = MODEL
     try:
-        reply = chat(
-            [
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_prompt},
-            ],
-            max_tokens=700,
-            model=MODEL,  # Llama 3.3 70B - reserved for the chatbot, see DOCS/01_PLAN.md
-        )
+        reply = chat(messages, max_tokens=700, model=MODEL)
+    except QuotaExhausted:
+        # Llama 3.3 70B's daily budget (100K tokens) is easily exhausted by a single day of
+        # testing - fall back to the tagging model rather than let the chatbot just break.
+        # Disclosed in the answer, not silently swapped.
+        model_used = TAGGING_MODEL
+        try:
+            reply = chat(messages, max_tokens=700, model=TAGGING_MODEL)
+            reply += (
+                "\n\n*(Answered by the fallback model — Llama 3.3 70B's daily quota is "
+                "exhausted for now; retry later for the primary model.)*"
+            )
+        except Exception as e:
+            reply = f"The chatbot's LLM call failed on both models: {e}"
     except Exception as e:
         reply = f"The chatbot's LLM call failed: {e}"
 
-    return {"answer": reply, "retrieved": relevant}
+    return {"answer": reply, "retrieved": relevant, "model_used": model_used}

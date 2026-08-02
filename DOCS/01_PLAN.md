@@ -40,7 +40,7 @@ of only 100,000 tokens/day turned out to cap out after ~190 tagged reviews — s
 
 | # | Deliverable | Definition of done |
 |---|---|---|
-| D1 | Multi-source raw dataset | Play Store + Reddit (posts + comments) reviews mentioning Zepto — App Store attempted and found unavailable via any public method, documented as a platform constraint — no volume cap, pulled to natural exhaustion per source, deduped, in one schema, with source/date/rating preserved |
+| D1 | Multi-source raw dataset | Play Store + App Store + Reddit (posts + comments) reviews mentioning Zepto — no volume cap, pulled to natural exhaustion per source (App Store capped at ~500 by the feed itself), deduped, in one schema, with source/date/rating preserved |
 | D2 | Cleaned corpus | Language-normalized, near-duplicate/spam stripped, non-Zepto noise removed, ready for coding |
 | D3 | Taxonomy v1 (grounded) | Tag dimensions + values derived from an open-coding pass on real data, not guessed upfront — **including the `friction_scope` (generic_ops vs. category_exploration) split** |
 | D4 | Tagged dataset | Every review scored against taxonomy v1 via structured Groq/Llama-3.3 output, machine-readable (one row/record per review) |
@@ -66,16 +66,18 @@ edge-case tests pass (or their failures are documented and accepted knowingly).
   - **Reddit**, via HTML scraping of `old.reddit.com` (see below), across a site-wide search plus
     ~10 targeted subreddits (r/india, r/bangalore, r/developersIndia, r/IndianStreetBets, etc.)
     and 3 sort orders, including comments on every matched post (not just submissions).
-  - **Apple App Store — attempted, not available.** The classic public RSS reviews feed
-    (`itunes.apple.com/.../rss/customerreviews/.../json`) now returns zero entries for *any* app
-    (verified against Instagram too, not just Zepto), and the modern web reviews API
-    (`amp-api-edge.apps.apple.com`) requires an authenticated bearer token scoped to the app's own
-    App Store Connect account, which is not available to us. This is a real platform-side
-    constraint discovered during execution, not a self-imposed limit — documented rather than
-    faked around. Zepto's iOS app (`id1575323645`, `com.zeptonow.customer`) shows ~1.01M ratings
-    at 4.75★ on the India storefront for context, but individual written reviews aren't
-    extractable via any public, unauthenticated method as of this run. **Two-source corpus
-    (Play Store + Reddit) going forward**, noted wherever the plan previously assumed three.
+  - **Apple App Store — available after all (correction).** An earlier pass through this plan
+    concluded the public RSS reviews feed (`itunes.apple.com/.../rss/customerreviews/.../json`)
+    was dead platform-wide, based on a test that returned zero entries for both Zepto and
+    Instagram. That conclusion was wrong: re-testing the identical endpoint later the same day
+    returned real, current reviews for both apps (450 across 10 pages for Zepto,
+    `id1575323645`). The most likely explanation is a transient outage or caching issue on
+    Apple's side at the moment of the first test, not a deprecated feed — a single failed probe,
+    even cross-checked against a second app, wasn't enough evidence to call it a permanent
+    platform constraint, and this was corrected as soon as a human review caught it (see
+    `DOCS/00b_REVIEW_NOTES_ROUND2.md`). **Three-source corpus: Play Store + App Store + Reddit.**
+    The feed's real, confirmed limitation is a ~500-review cap (10 pages × 50, recent reviews
+    only) — that part of the original expectation held up.
   - **Reddit access note:** Reddit's `.json` API endpoints return a bot-check 403 to
     unauthenticated requests (tested with browser-like headers, still blocked) — this appears to
     be current platform-wide behavior, not something specific to this run. The plain HTML search/

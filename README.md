@@ -64,18 +64,22 @@ Discovery Engine/
 
 ## Status
 
-- **Phase 1 (gather):** Play Store scraping complete — **163,539 unique reviews**, reached by
-  genuine exhaustion (every remaining sort/rating combination returned zero new results, not cut
-  short). Reddit scraping ongoing in the background (Reddit's own rate-limiting makes this slow —
-  see [DOCS/05_EDGE_CASES_AND_TESTING.md](DOCS/05_EDGE_CASES_AND_TESTING.md)), **2,757 posts +
-  comments so far** and growing. App Store: attempted, confirmed unavailable via any public
-  method (documented, not a silent gap). Combined unified corpus so far: **166,296 records**.
+- **Phase 1 (gather) — complete, three sources:** Play Store **163,539** (genuine exhaustion —
+  every remaining sort/rating combination returned zero new results). Reddit **1,073 posts +
+  38,861 comments** (complete, despite heavy platform rate-limiting along the way — see
+  [DOCS/05_EDGE_CASES_AND_TESTING.md](DOCS/05_EDGE_CASES_AND_TESTING.md)). App Store **450
+  reviews** — an earlier test wrongly concluded this feed was dead platform-wide; a same-day
+  re-test proved that wrong (likely a transient Apple-side outage at the time), corrected once
+  caught by review. Combined unified corpus: **~203,900 records**.
 - **Phase 2 (structure):** Taxonomy v1 finalized from a 150-record open-coding pass (see
-  [DOCS/04_TAXONOMY_DRAFT_v0.md](DOCS/04_TAXONOMY_DRAFT_v0.md)). At-scale tagging is running via
-  Groq — **discovered Llama 3.3 70B's free-tier budget is only 100,000 tokens/day, which caps out
-  after ~190 tagged reviews**, so tagging was switched to **Llama 3.1 8B Instant** (separate quota,
-  no daily wall hit at equivalent usage, and plenty capable for bounded-vocabulary classification).
-  Still a multi-day background process to cover the full corpus, not instant. Resumes automatically
-  (skips already-tagged ids) if stopped/restarted, and tags in random order so partial progress is
-  always an unbiased subsample.
-- **Phase 3/4:** not started yet — waiting on a large-enough tagged subsample to analyze.
+  [DOCS/04_TAXONOMY_DRAFT_v0.md](DOCS/04_TAXONOMY_DRAFT_v0.md)). At-scale tagging runs via Groq
+  Llama 3.1 8B Instant (Llama 3.3 70B is reserved for the chatbot — its free-tier budget of only
+  100,000 tokens/day caps out after ~190 tagged reviews). Workload split into three tiers to stay
+  within real rate limits: off-topic Reddit skipped entirely, "trivial" reviews (short, no
+  friction/category keyword) auto-tagged deterministically at zero LLM cost, and the LLM reserved
+  for the substantive pool, capped at a 20,000-review target. A round-1 human spot-check (20
+  records) caught the tagger over-applying `category_exploration` and `stated_avoidance` —
+  corrected via a deterministic re-derivation pass (`src/correct_tags.py`) plus a tightened
+  prompt for new tagging (see [DOCS/00b_REVIEW_NOTES_ROUND2.md](DOCS/00b_REVIEW_NOTES_ROUND2.md)).
+- **Phase 3/4:** built and working — pattern-analysis pipeline, Streamlit dashboard, and the
+  "Ask the Reviews" RAG chatbot all running locally; public deployment pending.

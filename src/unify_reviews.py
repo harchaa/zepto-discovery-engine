@@ -16,6 +16,7 @@ from common import RAW_DIR, read_jsonl, write_jsonl  # noqa: E402
 
 INPUTS = [
     ("play_store", "playstore_raw.jsonl"),
+    ("app_store", "appstore_raw.jsonl"),
     ("reddit_post", "reddit_posts_raw.jsonl"),
     ("reddit_comment", "reddit_comments_raw.jsonl"),
 ]
