@@ -30,6 +30,15 @@ their LLM tags:
    broad commerce-keyword list, it's reset to friction_scope=none rather than trusting the model's
    attempt to force-fit unrelated content into the taxonomy.
 
+4. `category_mentioned` occasionally got 3+ categories on one record (up to 6 on one) - found by
+   manually tracing a thin/confusing chatbot answer about "beauty products" back to its retrieved
+   reviews, two of which turned out to be a Reddit startup-pitch post name-dropping many product
+   types (not a Zepto review at all) and an unrelated platform price-comparison post. A real
+   review essentially never legitimately spans 3+ specific product categories - `MAX_PLAUSIBLE_
+   CATEGORIES` resets any record exceeding it to `not_category_specific`. Only 5 of 6,088 embedded
+   records were affected (0.08%), but for a rare category like beauty/personal_care (0.25% of the
+   sample to begin with), even a couple of polluting records meaningfully worsen retrieval.
+
 This is a free, instant, deterministic pass - re-tagging everything via the LLM would cost real
 quota to fix what a rule can fix directly. Src/tag_at_scale.py's TAXONOMY_PROMPT is separately
 tightened so NEW tagging doesn't keep repeating the same errors going forward.
@@ -99,6 +108,21 @@ def has_avoidance_language(text):
     return any(p in t for p in AVOIDANCE_PHRASES)
 
 
+# A 4th systematic error, found by manually tracing a chatbot answer back to its retrieved
+# reviews: a handful of records got tagged with 3+ categories at once (up to 6 on one record) -
+# a real review essentially never legitimately spans that many specific product categories in one
+# sitting. Checked: only 5 of 6,088 embedded substantive records hit this (0.08%), and all 5 were
+# garbage on inspection - a Reddit startup-pitch post name-dropping many product types while
+# validating a business idea (not a Zepto review at all), a Blinkit/Zepto-vs-BigBasket comparison
+# post, and generic/gibberish text. High-precision, low-volume signal: safe to reset outright
+# rather than needing a broader off-topic check.
+MAX_PLAUSIBLE_CATEGORIES = 2
+
+
+def has_category_overtagging(record):
+    return len(record.get("category_mentioned") or []) > MAX_PLAUSIBLE_CATEGORIES
+
+
 def main():
     tagged_path = f"{PROCESSED_DIR}/tagged_reviews.jsonl"
     cleaned_path = f"{PROCESSED_DIR}/cleaned_reviews.jsonl"
@@ -110,6 +134,7 @@ def main():
     avoidance_removed = 0
     requeued = 0
     off_topic_reset = 0
+    category_overtag_reset = 0
     corrected = []
     for t in tagged:
         t = dict(t)
@@ -129,6 +154,12 @@ def main():
 
         c = cleaned_by_id.get(t["id"]) or {}
         merged = {**c, **t}
+
+        if has_category_overtagging(t):
+            category_overtag_reset += 1
+            t["category_mentioned_corrected_from"] = t.get("category_mentioned")
+            t["category_mentioned"] = ["not_category_specific"]
+            merged["category_mentioned"] = t["category_mentioned"]
 
         if looks_off_topic(merged):
             off_topic_reset += 1
@@ -181,6 +212,7 @@ def main():
     print(f"stated_avoidance removed (no avoidance language found in text): {avoidance_removed}")
     print(f"low-rating trivial auto-tags dropped for re-queueing to LLM: {requeued}")
     print(f"off-topic Reddit content reset to friction_scope=none: {off_topic_reset}")
+    print(f"category_mentioned over-tagging (3+ categories) reset to not_category_specific: {category_overtag_reset}")
 
     write_jsonl(tagged_path, corrected)
     print(f"Wrote corrected tags back to {tagged_path}")
