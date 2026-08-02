@@ -1,93 +1,93 @@
 {
   "meta": {
-    "n_tagged_and_on_topic": 68558,
+    "n_tagged_and_on_topic": 69158,
     "source_split": {
-      "play_store": 67506,
-      "reddit": 998,
-      "app_store": 54
+      "play_store": 68072,
+      "reddit": 1031,
+      "app_store": 55
     },
-    "frequency_threshold_used": 23,
-    "frequency_threshold_basis_n": 2270
+    "frequency_threshold_used": 25,
+    "frequency_threshold_basis_n": 2487
   },
   "ops_friction_context_only": {
-    "n": 1929,
+    "n": 2139,
     "top_friction_types": [
       [
         "delivery_speed",
-        576
+        618
       ],
       [
         "app_ux_bug",
-        566
+        595
       ],
       [
         "customer_support",
-        514
+        579
       ],
       [
         "quality_perishables",
-        297
+        362
       ],
       [
         "pricing_value",
-        257
+        291
       ],
       [
         "no_easy_refund",
-        174
+        182
       ],
       [
         "damaged_in_transit",
-        144
+        169
       ],
       [
         "delivery_reliability",
-        79
+        81
       ],
       [
         "payment_discount_glitch",
-        26
+        36
       ],
       [
         "product_availability",
         17
       ],
       [
+        "wrong_item_delivered",
+        11
+      ],
+      [
+        "order_cancellation",
+        10
+      ],
+      [
         "none",
         9
       ],
       [
-        "order_cancellation",
+        "trust_vs_specialist_retailer",
         8
       ],
       [
-        "trust_vs_specialist_retailer",
-        7
-      ],
-      [
-        "missing_items",
-        4
-      ],
-      [
-        "wrong_item_delivered",
-        4
+        "quality_uncertainty_unfamiliar_category",
+        8
       ]
     ]
   },
   "category_exploration_primary": {
-    "n": 341,
+    "n": 348,
     "top_friction_types": [
       [
         "quality_uncertainty_unfamiliar_category",
-        184
+        187
       ],
       [
         "quality_perishables",
-        179
+        183
       ],
       [
         "product_authenticity",
-        153
+        159
       ],
       [
         "customer_support",
@@ -98,11 +98,11 @@
         29
       ],
       [
-        "damaged_in_transit",
-        28
+        "trust_vs_specialist_retailer",
+        29
       ],
       [
-        "trust_vs_specialist_retailer",
+        "damaged_in_transit",
         28
       ],
       [
@@ -133,7 +133,7 @@
     "categories_involved": [
       [
         "groceries_staples",
-        177
+        183
       ],
       [
         "not_category_specific",
@@ -173,6 +173,10 @@
       ],
       [
         "beauty",
+        1
+      ],
+      [
+        "pet_care",
         1
       ]
     ]
@@ -218,13 +222,13 @@
       "trust_vs_specialist_retailer": 2
     },
     "groceries_staples": {
-      "quality_perishables": 105,
-      "product_authenticity": 96,
-      "quality_uncertainty_unfamiliar_category": 93,
+      "quality_perishables": 109,
+      "product_authenticity": 102,
+      "quality_uncertainty_unfamiliar_category": 95,
       "damaged_in_transit": 21,
       "no_easy_refund": 17,
       "customer_support": 17,
-      "trust_vs_specialist_retailer": 14,
+      "trust_vs_specialist_retailer": 15,
       "delivery_speed": 13,
       "app_ux_bug": 11,
       "no_info_before_purchase": 10,
@@ -275,53 +279,64 @@
     "beauty": {
       "quality_uncertainty_unfamiliar_category": 1,
       "product_authenticity": 1
+    },
+    "pet_care": {
+      "quality_uncertainty_unfamiliar_category": 1
     }
   },
   "behavior_signal_breakdown": {
-    "none_detected": 67204,
-    "habit_repeat_purchase": 1219,
-    "stated_avoidance": 48,
-    "discovery_channel_mentioned": 43,
+    "none_detected": 67659,
+    "habit_repeat_purchase": 1289,
+    "e": 100,
+    "stated_avoidance": 91,
+    "n": 50,
+    "d": 50,
+    "t": 50,
+    "discovery_channel_mentioned": 48,
+    "o": 25,
+    "_": 25,
+    "c": 25,
     "exploration_attempt_negative": 20,
-    "comparison_to_competitor": 10,
+    "comparison_to_competitor": 12,
     "self_described_tenure": 8,
     "exploration_attempt_positive": 6,
     "convenience_seeking_language": 2,
     "price_sensitive_language": 1
   },
   "sentiment_breakdown": {
-    "positive": 49975,
-    "neutral": 15841,
-    "negative": 2626,
-    "mixed": 116
+    "positive": 50245,
+    "neutral": 15904,
+    "negative": 2888,
+    "mixed": 121
   },
   "category_mentioned_overall": {
-    "not_category_specific": 65153,
-    "groceries_staples": 3081,
-    "snacks_beverages": 145,
-    "electronics": 60,
-    "apparel": 13,
+    "not_category_specific": 65243,
+    "groceries_staples": 3579,
+    "snacks_beverages": 147,
+    "electronics": 65,
+    "apparel": 14,
+    "personal_care": 13,
     "baby_care": 12,
-    "personal_care": 11,
     "home_kitchen": 8,
     "pharmacy_health": 8,
-    "beauty": 2,
+    "beauty": 4,
     "dairy_products": 1,
     "kitchen_appliances": 1,
     "jewelry": 1,
     "clothing": 1,
-    "appliances": 1
+    "appliances": 1,
+    "pet_care": 1
   },
   "stated_avoidance_leads": {
-    "n": 48,
+    "n": 91,
     "categories": [
       [
         "groceries_staples",
-        26
+        63
       ],
       [
         "not_category_specific",
-        12
+        16
       ],
       [
         "snacks_beverages",
@@ -329,7 +344,11 @@
       ],
       [
         "electronics",
-        3
+        4
+      ],
+      [
+        "personal_care",
+        2
       ],
       [
         "baby_care",
@@ -337,10 +356,6 @@
       ],
       [
         "dairy_products",
-        1
-      ],
-      [
-        "personal_care",
         1
       ],
       [
@@ -353,26 +368,41 @@
   "segment_x_behavior": {
     "pos(4-5)": {
       "play_store": {
-        "none_detected": 60031,
-        "habit_repeat_purchase": 1152,
-        "discovery_channel_mentioned": 25,
+        "none_detected": 60246,
+        "habit_repeat_purchase": 1219,
+        "e": 40,
+        "discovery_channel_mentioned": 26,
+        "n": 20,
+        "d": 20,
+        "t": 20,
+        "o": 10,
+        "_": 10,
+        "c": 10,
         "self_described_tenure": 8,
-        "comparison_to_competitor": 5,
+        "comparison_to_competitor": 6,
         "exploration_attempt_positive": 4,
         "convenience_seeking_language": 2,
         "price_sensitive_language": 1,
-        "exploration_attempt_negative": 1
+        "exploration_attempt_negative": 1,
+        "stated_avoidance": 1
       },
       "app_store": {
-        "none_detected": 48
+        "none_detected": 49
       }
     },
     "neu(3)": {
       "play_store": {
-        "none_detected": 4153,
-        "habit_repeat_purchase": 34,
+        "none_detected": 4176,
+        "habit_repeat_purchase": 35,
+        "e": 8,
+        "stated_avoidance": 7,
         "discovery_channel_mentioned": 4,
-        "stated_avoidance": 3,
+        "n": 4,
+        "d": 4,
+        "t": 4,
+        "o": 2,
+        "_": 2,
+        "c": 2,
         "comparison_to_competitor": 1,
         "exploration_attempt_negative": 1,
         "exploration_attempt_positive": 1
@@ -380,11 +410,18 @@
     },
     "neg(1-2)": {
       "play_store": {
-        "none_detected": 1993,
-        "stated_avoidance": 40,
-        "habit_repeat_purchase": 24,
+        "none_detected": 2181,
+        "stated_avoidance": 76,
+        "e": 52,
+        "habit_repeat_purchase": 26,
+        "n": 26,
+        "d": 26,
+        "t": 26,
         "exploration_attempt_negative": 17,
-        "discovery_channel_mentioned": 8,
+        "o": 13,
+        "_": 13,
+        "c": 13,
+        "discovery_channel_mentioned": 10,
         "comparison_to_competitor": 1
       },
       "app_store": {
@@ -394,11 +431,11 @@
     },
     "n/a": {
       "reddit": {
-        "none_detected": 974,
+        "none_detected": 1002,
         "habit_repeat_purchase": 9,
-        "discovery_channel_mentioned": 6,
-        "stated_avoidance": 4,
-        "comparison_to_competitor": 3,
+        "discovery_channel_mentioned": 8,
+        "stated_avoidance": 6,
+        "comparison_to_competitor": 4,
         "exploration_attempt_negative": 1,
         "exploration_attempt_positive": 1
       }
@@ -407,15 +444,15 @@
   "exploration_themes_above_threshold": [
     [
       "quality_uncertainty_unfamiliar_category",
-      184
+      187
     ],
     [
       "quality_perishables",
-      179
+      183
     ],
     [
       "product_authenticity",
-      153
+      159
     ],
     [
       "customer_support",
@@ -426,13 +463,15 @@
       29
     ],
     [
-      "damaged_in_transit",
-      28
+      "trust_vs_specialist_retailer",
+      29
     ],
     [
-      "trust_vs_specialist_retailer",
+      "damaged_in_transit",
       28
-    ],
+    ]
+  ],
+  "exploration_themes_below_threshold_weak": [
     [
       "no_info_before_purchase",
       24
@@ -440,9 +479,7 @@
     [
       "pricing_value",
       24
-    ]
-  ],
-  "exploration_themes_below_threshold_weak": [
+    ],
     [
       "no_easy_refund",
       21
