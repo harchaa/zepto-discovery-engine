@@ -109,10 +109,16 @@ edge-case tests pass (or their failures are documented and accepted knowingly).
   spec). This step must explicitly
   confirm the **`friction_scope`** split (generic_ops vs. category_exploration vs. ambiguous) has
   clear, testable tie-break rules — this is the dimension the whole analytical lens depends on.
-- **Step 2d — Tag at scale:** run every cleaned record through a structured-output prompt against
-  taxonomy v1 using **Groq (Llama 3.3)**, temperature 0, JSON schema per record, few-shot examples
-  pulled from the open-coding sample (include at least one worked `friction_scope` tie-break
-  example per ambiguous pattern found in 2b).
+- **Step 2d — Tag at scale:** run cleaned records through a structured-output prompt against
+  taxonomy v1 using **Groq (Llama 3.1 8B Instant** — revised from 70B after hitting real daily
+  quota walls, see [03_THOUGHT_PROCESS.md §9](03_THOUGHT_PROCESS.md)), temperature 0, JSON schema
+  per record, few-shot examples pulled from the open-coding sample. Split into three workload
+  tiers (off-topic skip, deterministic trivial auto-tag, LLM for the substantive pool) and capped
+  at a 20,000-substantive-record target rather than tagging the entire corpus — concluded at
+  **6,252 (31%)** on 2026-08-02 after two API keys' daily quotas were both exhausted; judged
+  sufficient rather than waiting several more days (see
+  [07_VALIDATION_REPORT.md](07_VALIDATION_REPORT.md) for what that means for confidence in the
+  results).
 - **Output:** `data/processed/tagged_reviews.jsonl`
 
 ### Phase 3 — Find patterns

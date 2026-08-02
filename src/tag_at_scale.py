@@ -41,7 +41,11 @@ BATCH_SIZE = 25  # llama-3.1-8b-instant's TPM cap is 6,000 (vs 12,000 for the 70
 # smaller batch keeps (prompt_tokens + max_tokens) safely under that per-request reservation
 MAX_TOKENS_PER_ITEM = 110  # observed actual ~93/item; adds headroom without over-reserving
 SLEEP_BETWEEN_BATCHES = 45.0  # paced to the 6,000 TPM budget at ~4k tokens/batch-of-25
-TARGET_SUBSTANTIVE = 20000  # total substantive records to LLM-tag across all runs (see docstring)
+TARGET_SUBSTANTIVE = 20000  # total substantive records to LLM-tag across all runs (see docstring).
+# Tagging was deliberately stopped at 6,252 (31%) on Aug 2 2026 - two API keys' daily quotas were
+# both exhausted and the sample was judged sufficient to proceed (see DOCS/07_VALIDATION_REPORT.md
+# and README.md). Left at 20,000 here rather than lowered, so re-running this script later simply
+# continues toward the original target instead of needing to be reconfigured.
 
 TRIVIAL_MAX_LEN = 40
 SIGNAL_KEYWORDS = [

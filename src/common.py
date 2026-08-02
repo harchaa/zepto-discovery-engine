@@ -137,16 +137,36 @@ def load_joined_tagged():
     return joined
 
 
+APP_EXPORT_FIELDS = [
+    "source", "record_id", "date", "rating", "text", "title", "category_mentioned", "sentiment",
+    "friction_scope", "friction_type", "behavior_signal", "segment_hint",
+    "auto_tagged_trivial", "auto_tagged_insufficient_text",  # build_embeddings.py filters on these
+]
+APP_EXPORT_TEXT_MAX_LEN = 800  # dashboard/chatbot quotes never show more than a few hundred chars
+
+
 def dump_app_export(rows=None):
     """Write the joined (tagged + on-topic) rows to a small standalone export file.
     The full cleaned_reviews.jsonl is 60MB+ (the whole gathered corpus) and only needed by the
     pipeline scripts (tagging, embedding) - the deployed app only ever needs the much smaller
     tagged subset, so it reads this export instead of recomputing the join from the giant file.
     Keeps the deployed repo small and the app's startup fast regardless of corpus size.
+
+    Trimmed to just the fields the app actually reads (dropping url/reply_content/user_name/
+    app_version/locale/helpful_count/platform/language/insufficient_text/off_topic_flag, none of
+    which the dashboard or chatbot ever displays) and truncates text - this cut the export from
+    ~51MB to a fraction of that at ~69k rows, which matters because GitHub warns above 50MB per
+    file and hard-blocks at 100MB, and this file was on a growth trajectory toward that limit.
     """
     rows = rows if rows is not None else load_joined_tagged()
-    write_jsonl(f"{PROCESSED_DIR}/app_export.jsonl", rows)
-    return len(rows)
+    trimmed = []
+    for r in rows:
+        row = {k: r.get(k) for k in APP_EXPORT_FIELDS}
+        if row.get("text"):
+            row["text"] = row["text"][:APP_EXPORT_TEXT_MAX_LEN]
+        trimmed.append(row)
+    write_jsonl(f"{PROCESSED_DIR}/app_export.jsonl", trimmed)
+    return len(trimmed)
 
 
 def find_quotes(rows, predicate, limit=4):

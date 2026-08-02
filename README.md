@@ -25,9 +25,10 @@ categories) is the primary analytical focus throughout — dashboard, insights, 
 | [DOCS/03_THOUGHT_PROCESS.md](DOCS/03_THOUGHT_PROCESS.md) | Design rationale, tradeoffs, RQ mapping, scope limits |
 | [DOCS/04_TAXONOMY_DRAFT_v0.md](DOCS/04_TAXONOMY_DRAFT_v0.md) | Tagging taxonomy — v0 hypothesis plus the v1 grounded spec (finalized after a 150-record open-coding pass), incl. `friction_scope` |
 | [DOCS/05_EDGE_CASES_AND_TESTING.md](DOCS/05_EDGE_CASES_AND_TESTING.md) | Edge cases per phase, written before each phase is built, checked off after |
+| [DOCS/07_VALIDATION_REPORT.md](DOCS/07_VALIDATION_REPORT.md) | Phase 5 validation — tagging accuracy across two spot-check rounds, frequency thresholds, triangulation, known limitations |
 
-Later, once real data runs through the pipeline: `DOCS/06_INSIGHTS.md` and
-`DOCS/07_VALIDATION_REPORT.md` (not created yet — see Plan Phase 4/5).
+Not yet written: `DOCS/06_INSIGHTS.md` (a synthesized findings write-up — the dashboard currently
+serves this role directly).
 
 ## Repo layout
 
@@ -71,15 +72,22 @@ Discovery Engine/
   reviews** — an earlier test wrongly concluded this feed was dead platform-wide; a same-day
   re-test proved that wrong (likely a transient Apple-side outage at the time), corrected once
   caught by review. Combined unified corpus: **~203,900 records**.
-- **Phase 2 (structure):** Taxonomy v1 finalized from a 150-record open-coding pass (see
+- **Phase 2 (structure) — concluded at 6,252 substantive tags (31% of a 20,000 target):**
+  Taxonomy v1 finalized from a 150-record open-coding pass (see
   [DOCS/04_TAXONOMY_DRAFT_v0.md](DOCS/04_TAXONOMY_DRAFT_v0.md)). At-scale tagging runs via Groq
   Llama 3.1 8B Instant (Llama 3.3 70B is reserved for the chatbot — its free-tier budget of only
-  100,000 tokens/day caps out after ~190 tagged reviews). Workload split into three tiers to stay
-  within real rate limits: off-topic Reddit skipped entirely, "trivial" reviews (short, no
-  friction/category keyword) auto-tagged deterministically at zero LLM cost, and the LLM reserved
-  for the substantive pool, capped at a 20,000-review target. A round-1 human spot-check (20
-  records) caught the tagger over-applying `category_exploration` and `stated_avoidance` —
-  corrected via a deterministic re-derivation pass (`src/correct_tags.py`) plus a tightened
-  prompt for new tagging (see [DOCS/00b_REVIEW_NOTES_ROUND2.md](DOCS/00b_REVIEW_NOTES_ROUND2.md)).
+  100,000 tokens/day caps out after ~190 tagged reviews; the 8B model's own daily budget is
+  500,000 tokens). Workload split into three tiers to stay within real rate limits: off-topic
+  Reddit skipped entirely, "trivial" reviews (short, no friction/category keyword) auto-tagged
+  deterministically at zero LLM cost (~63,000 of 69,158 total tagged), and the LLM reserved for
+  the substantive pool. Stopped short of the 20,000-record target on 2026-08-02 after two
+  separate API keys both hit their daily quota the same day — judged sufficient to proceed rather
+  than wait several more days; see [DOCS/07_VALIDATION_REPORT.md](DOCS/07_VALIDATION_REPORT.md)
+  for exactly what that means for confidence in the numbers. Two rounds of human spot-check (20
+  records each) caught the tagger over-applying `category_exploration`/`stated_avoidance` to
+  routine complaints, and separately, Reddit content that merely name-drops "Zepto" without being
+  about a real shopping experience — both corrected via a deterministic pass
+  (`src/correct_tags.py`) plus a tightened prompt (see
+  [DOCS/00b_REVIEW_NOTES_ROUND2.md](DOCS/00b_REVIEW_NOTES_ROUND2.md)).
 - **Phase 3/4:** built and working — pattern-analysis pipeline, Streamlit dashboard, and the
   "Ask the Reviews" RAG chatbot all running locally; public deployment pending.
