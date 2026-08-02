@@ -51,6 +51,17 @@ Discovery Engine/
   free, no extra API key.
 - **App:** Streamlit, deployed on Streamlit Community Cloud (public link).
 
+## Repo & deployment
+
+- **GitHub (public):** https://github.com/harchaa/zepto-discovery-engine
+- **Public Streamlit link:** not yet live — Streamlit Community Cloud's deploy step requires
+  logging in with GitHub OAuth through their web UI, which can't be driven headlessly. To finish
+  it: go to [share.streamlit.io](https://share.streamlit.io) → "New app" → pick this repo/branch
+  `master` → main file path `app/streamlit_app.py` → in the app's **Settings → Secrets**, add
+  `GROQ_API_KEY = "<your key>"` → Deploy. Takes about a minute; update this line with the URL once live.
+- To continue the pipeline locally: `pip install -r requirements.txt`, add `.env` from
+  `.env.example`, then run the `src/` scripts in order (see [DOCS/01_PLAN.md](DOCS/01_PLAN.md)).
+
 ## Status
 
 - **Phase 1 (gather):** Play Store scraping complete — **163,539 unique reviews**, reached by

@@ -1,19 +1,19 @@
 {
   "per_file_raw_counts": {
     "play_store": 163539,
-    "reddit_post": 236,
-    "reddit_comment": 2521
+    "reddit_post": 682,
+    "reddit_comment": 30357
   },
-  "total_unique_after_dedupe": 166296,
+  "total_unique_after_dedupe": 194578,
   "edge_case_checks": {
     "dedupe_integrity_play_store": "PASS",
     "dedupe_integrity_reddit": "PASS",
-    "empty_text_count": 40,
-    "date_sanity": "PASS",
+    "empty_text_count": 192,
+    "date_sanity": "FAIL (75 out-of-range dates)",
     "cross_source_text_dupes": 0,
     "volume_by_source": {
       "play_store": 163539,
-      "reddit": 2757
+      "reddit": 31039
     }
   }
 }
