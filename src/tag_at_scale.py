@@ -63,6 +63,14 @@ TAXONOMY_PROMPT = """You are tagging user feedback about Zepto (an Indian quick-
 app) for a research project studying why users repeat-buy the same categories (groceries, snacks) \
 and rarely try new ones (personal care, beauty, baby, pet, pharmacy, electronics, apparel).
 
+IMPORTANT FIRST CHECK: some Reddit posts merely mention the word "Zepto" without actually being \
+about a shopping/product/delivery experience with it - a joke about tech-interview topics at \
+different companies, a stock-market comment, an unrelated meme. If the text is NOT actually \
+describing a real shopping/product/service experience with Zepto, tag it as: category_mentioned \
+[not_category_specific], sentiment neutral (unless clearly positive/negative about something \
+else), friction_scope none, friction_type [], behavior_signal [none_detected]. Do not force-fit \
+off-topic content into the taxonomy just because it contains a category-sounding word.
+
 For EACH numbered review below, return one JSON object with these exact fields:
 - "id": the review's given id (copy exactly)
 - "category_mentioned": array from [groceries_staples, snacks_beverages, personal_care, beauty, \

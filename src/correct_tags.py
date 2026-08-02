@@ -16,9 +16,19 @@ their LLM tags:
 
 2. `behavior_signal: stated_avoidance` was applied to reviews with no actual avoidance statement
    (e.g. a plain price complaint). Filtered to require an explicit avoidance-indicating phrase in
-   the review text ("avoid", "never buy", "won't buy", "stopped buying", "boycott", etc.) -
-   English-only, a known limitation for non-English avoidance statements (documented, not silently
-   assumed away).
+   the review text ("avoid", "never buy", "won't buy", "stopped buying", "boycott", "don't ever",
+   "stopped using", etc.) - English-only, a known limitation for non-English avoidance statements
+   (documented, not silently assumed away). The phrase list was expanded after a round-2
+   spot-check found it too narrow, wrongly stripping real avoidance statements phrased as "don't
+   ever order" or "stopped using it".
+
+3. Reddit posts merely name-dropping "Zepto" without being about an actual shopping/product
+   experience (a tech-interview-topics joke, a stock-market comment) were still getting a friction
+   tag, because `off_topic_flag` (set during cleaning) only checks whether the word "zepto"
+   appears - not whether the post is about the shopping experience. `looks_off_topic()` adds a
+   second, narrower check: if a Reddit record has a friction tag but its text contains none of a
+   broad commerce-keyword list, it's reset to friction_scope=none rather than trusting the model's
+   attempt to force-fit unrelated content into the taxonomy.
 
 This is a free, instant, deterministic pass - re-tagging everything via the LLM would cost real
 quota to fix what a rule can fix directly. Src/tag_at_scale.py's TAXONOMY_PROMPT is separately
@@ -40,9 +50,38 @@ NEW_ADJACENT_CATEGORIES = {
     "personal_care", "beauty", "baby_care", "pet_care", "pharmacy_health", "electronics", "apparel",
 }
 AVOIDANCE_PHRASES = [
-    "avoid", "never buy", "never order", "wont buy", "won't buy", "will not buy",
-    "stopped buying", "stopped ordering", "boycott", "not buying", "not going to buy",
+    "avoid", "never buy", "never order", "never ordering", "never using", "wont buy",
+    "won't buy", "will not buy", "won't order", "wont order", "stopped buying",
+    "stopped ordering", "stopped using", "boycott", "not buying", "not going to buy",
+    "don't ever", "dont ever", "don't use", "dont use", "please don't use",
+    "won't use", "wont use",
 ]
+
+# Round-2 spot-check (a fresh sample after the friction_scope/avoidance fixes) found a further
+# error: Reddit posts that merely name-drop "Zepto" without being about an actual shopping/product
+# experience (a tech-interview-topics joke, a stock-market comment) were still getting tagged
+# category_exploration/generic_ops with an invented friction_type, because off_topic_flag (set
+# during cleaning) only checks whether the word "zepto" appears - it doesn't check whether the
+# post is actually ABOUT the shopping experience. Play Store/App Store reviews aren't at risk
+# here (writing one is inherently about the app), so this only applies to Reddit.
+COMMERCE_KEYWORDS = [
+    "order", "deliver", "buy", "bought", "purchase", "product", "item", "app", "refund",
+    "service", "quality", "price", "pricing", "package", "packaging", "review", "shop",
+    "store", "cart", "checkout", "payment", "customer", "support", "complain", "return",
+    "exchange", "discount", "coupon", "offer", "groceries", "grocery", "fruit", "vegetable",
+    "delivery", "rider", "captain", "app crash", "bug", "subscription", "membership",
+    "area", "available", "availability", "trust", "genuine", "authentic", "fake", "quality",
+    "cheap", "expensive", "brand", "stock", "pincode",
+]
+
+
+def looks_off_topic(record):
+    if record.get("source") != "reddit":
+        return False
+    if record.get("friction_scope") in (None, "none"):
+        return False
+    text = (record.get("text") or "").lower()
+    return not any(k in text for k in COMMERCE_KEYWORDS)
 
 
 def recompute_friction_scope(record):
@@ -70,6 +109,7 @@ def main():
     scope_changed = 0
     avoidance_removed = 0
     requeued = 0
+    off_topic_reset = 0
     corrected = []
     for t in tagged:
         t = dict(t)
@@ -87,6 +127,39 @@ def main():
             corrected.append(t)
             continue
 
+        c = cleaned_by_id.get(t["id"]) or {}
+        merged = {**c, **t}
+
+        if looks_off_topic(merged):
+            off_topic_reset += 1
+            # Keep the pre-correction tags around (not just friction_scope) so a future keyword
+            # refinement can restore a record if it turns out this reset it wrongly - the very
+            # thing that would otherwise happen silently if a fix here needed a fix of its own.
+            t["pre_off_topic_correction"] = {
+                "friction_scope": t.get("friction_scope"),
+                "friction_type": t.get("friction_type"),
+                "category_mentioned": t.get("category_mentioned"),
+                "behavior_signal": t.get("behavior_signal"),
+            }
+            t["friction_scope"] = "none"
+            t["friction_type"] = []
+            t["category_mentioned"] = ["not_category_specific"]
+            t["behavior_signal"] = ["none_detected"]
+            t["off_topic_content_corrected"] = True
+            corrected.append(t)
+            continue
+
+        if t.get("off_topic_content_corrected") and "pre_off_topic_correction" in t:
+            # Re-evaluate a previous reset against the current (possibly wider) keyword list,
+            # using the ORIGINAL pre-reset tags - otherwise a reset record reads friction_scope
+            # "none" forever and can never be un-reset even if the keyword list improves.
+            prior = t["pre_off_topic_correction"]
+            if not looks_off_topic({**c, **prior}):
+                t.update(prior)
+                del t["pre_off_topic_correction"]
+                del t["off_topic_content_corrected"]
+                off_topic_reset -= 1  # restored, not a fresh reset this run
+
         old_scope = t.get("friction_scope")
         new_scope = recompute_friction_scope(t)
         if new_scope != old_scope:
@@ -95,7 +168,7 @@ def main():
             t["friction_scope_corrected_from"] = old_scope
 
         if "stated_avoidance" in (t.get("behavior_signal") or []):
-            text = (cleaned_by_id.get(t["id"]) or {}).get("text", "")
+            text = c.get("text", "")
             if not has_avoidance_language(text):
                 t["behavior_signal"] = [b for b in t["behavior_signal"] if b != "stated_avoidance"]
                 if not t["behavior_signal"]:
@@ -107,6 +180,7 @@ def main():
     print(f"friction_scope corrected: {scope_changed}")
     print(f"stated_avoidance removed (no avoidance language found in text): {avoidance_removed}")
     print(f"low-rating trivial auto-tags dropped for re-queueing to LLM: {requeued}")
+    print(f"off-topic Reddit content reset to friction_scope=none: {off_topic_reset}")
 
     write_jsonl(tagged_path, corrected)
     print(f"Wrote corrected tags back to {tagged_path}")
