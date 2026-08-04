@@ -40,15 +40,15 @@ def main():
     rows = read_jsonl(export_path)
     print(f"{len(rows)} tagged, on-topic records available")
 
-    # Trivial/insufficient auto-tagged records ("good", "nice app") carry no real signal and
-    # would just dilute retrieval quality - only embed LLM-judged (substantive) records, which
-    # is where the chatbot's citable quotes actually need to come from.
-    substantive_rows = [r for r in rows if not r.get("auto_tagged_trivial") and not r.get("auto_tagged_insufficient_text")]
-    print(f"{len(substantive_rows)} substantive (non-auto-tagged) records eligible for embedding")
+    # Embed the FULL tagged corpus, not just the LLM-judged "substantive" slice - the chatbot
+    # should be able to search everything, including the deterministically auto-tagged trivial
+    # reviews ("good", "nice app"). Only true empty-text records are excluded (nothing to embed).
+    eligible_rows = [r for r in rows if (r.get("text") or "").strip()]
+    print(f"{len(eligible_rows)} records with text eligible for embedding")
 
     existing_emb, existing_meta = load_existing()
     existing_ids = {m["id"] for m in existing_meta}
-    todo = [r for r in substantive_rows if r["record_id"] not in existing_ids and (r.get("text") or "").strip()]
+    todo = [r for r in eligible_rows if r["record_id"] not in existing_ids]
     print(f"{len(existing_meta)} already embedded, {len(todo)} new to embed")
 
     if not todo:
