@@ -180,17 +180,6 @@ with tab_dashboard:
     c3.metric("Play Store / App Store", f"{src_split.get('play_store', 0):,} / {src_split.get('app_store', 0):,}")
     c4.metric("Reddit", f"{src_split.get('reddit', 0):,}")
 
-    st.info(
-        "**Honest scope note:** tagging is a resumable, rate-limit-bound process — concluded at "
-        f"{tagged_n:,} tagged (31% of an original 20,000-substantive-record target) after two API "
-        "keys' daily quotas were exhausted the same day; judged sufficient to proceed rather than "
-        "wait several more days (see `DOCS/07_VALIDATION_REPORT.md`). Three sources: Play Store, "
-        "App Store, Reddit. Two rounds of human spot-check caught and fixed systematic tagging "
-        "errors (`DOCS/00b_REVIEW_NOTES_ROUND2.md`) — treat theme counts as a large, validated "
-        "sample, not a census.",
-        icon="ℹ️",
-    )
-
     # ---- The story, upfront -------------------------------------------------
     habit_n = sum(1 for r in rows if "habit_repeat_purchase" in (r.get("behavior_signal") or []))
     expl_n = tables["category_exploration_primary"]["n"]
